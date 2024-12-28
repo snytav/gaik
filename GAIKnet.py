@@ -1,20 +1,4 @@
 #import tensorflow
-import torch
-
-
-
-
-import torch.nn as nn
-
-class Cart2_Pines_Sph_Layer(nn.Module):
-    def __init__(self):
-        super(Cart2_Pines_Sph_Layer).__init__()
-
-    def forward(self,x):
-        r = torch.norm(x,dim=1)
-        stu = torch.divide(x, r)
-        spheres = torch.concat([r, stu], axis=1)
-        return spheres
 
 
 

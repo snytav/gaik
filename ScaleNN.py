@@ -70,3 +70,10 @@ class ScaleNNPotential(nn.Module):
         u_final = u_nn * scale_external
 
         return u_final
+
+if __name__ == '__main__':
+    power = 2
+    R = 1.6e4
+    R_min = 0.0
+    scale_potential = True
+    sc = ScaleNNPotential(power,R,R_min,scale_potential)
