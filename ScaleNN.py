@@ -15,13 +15,14 @@ def transform(data,scaler,scale_,min_):
     return X
 
 # 16000, 0.0
-def compute_shape_parameters(R,R_min,min_):
+def compute_shape_parameters(R,R_min,min_,scaler):
 
     R_vec = torch.tensor([R, R_min, 0])
-    R_vec_ND = transform(R_vec,R, R_min, min_)
+    R_vec_ND = transform(R_vec,scaler, R_min, min_)
 
-    a = transform(R, R_min, 0,min_,torch.tensor([0, 0]))
-    b = transform(R, R_min, 0,min_,torch.tensor([0, 1]))
+    a = R_vec_ND[0]
+    b = R_vec_ND[1]
+
 
     e = torch.sqrt(1 - b**2 / a**2)
     return a, b, e
@@ -33,13 +34,13 @@ def r_safety_set(r, clip=1.0):
     return r_cap, r_inv_cap
 
 class ScaleNNPotential(nn.Module):
-    def __init__(self,power,R,R_min,scale_potential,min_):
+    def __init__(self,scaler,power,R,R_min,scale_potential,min_):
         super(ScaleNNPotential, self).__init__()
         self.power = power
         self.use_transition_potential = True # kwargs.get("use_transition_potential", [True])[0]
 
         self.scale_potential = True
-        a, b, e = compute_shape_parameters(R, R_min,min_)
+        a, b, e = compute_shape_parameters(R, R_min,min_,scaler)
         self.a = a
         self.b = b
         self.e = e
@@ -73,12 +74,13 @@ class ScaleNNPotential(nn.Module):
 
 if __name__ == '__main__':
     power = 2
+    scaler = 6.25e-5
     R = 1.6e4
     R_min = 0.195
     scale_potential = True
     use_transition_potential = True
     min_ = 0.0
-    sc = ScaleNNPotential(power,R,R_min,scale_potential,min_)
+    sc = ScaleNNPotential(scaler,power,R,R_min,scale_potential,min_)
     x = np.loadtxt('scale_nn_in.txt')
     y = sc(x)
 
