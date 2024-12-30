@@ -28,7 +28,7 @@ def compute_shape_parameters(R,R_min,min_,scaler):
     return a, b, e
 
 def r_safety_set(r, clip=1.0):
-    r_inv = torch.divide(.0, r)
+    r_inv = torch.divide(torch.ones_like(r), r)
     r_inv_cap = torch.clip(r_inv, 0.0, clip)
     r_cap = torch.clip(r, 0.0, clip)
     return r_cap, r_inv_cap
@@ -61,7 +61,7 @@ class ScaleNNPotential(nn.Module):
         scale_external = torch.pow(r_inv_cap, self.power)
 
         # Don't scale within the critical radius (1+e)
-        tf.ones_like(scale_external)
+        torch.ones_like(scale_external)
 
         # Must use a smooth_step function instead of tanh to
         # force solution scaling to 0 or 1.
@@ -81,7 +81,8 @@ if __name__ == '__main__':
     use_transition_potential = True
     min_ = 0.0
     sc = ScaleNNPotential(scaler,power,R,R_min,scale_potential,min_)
-    x = np.loadtxt('scale_nn_in.txt')
-    y = sc(x)
+    x = torch.from_numpy(np.loadtxt('scale_nn_in.txt'))
+    u_nn = torch.zeros(x.shape[0],1)
+    y = sc(x,u_nn)
 
     qq = 0
