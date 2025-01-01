@@ -23,11 +23,10 @@ class EnforceBoundaryConditions(nn.Module):
         self.trainable_tanh = trainable_tanh #kwargs.get("trainable_tanh")[0]
         self.r_max = tanh_r #kwargs.get("tanh_r", [r_max])[0]
         self.k_init = tanh_k #kwargs.get("tanh_k", [1.0])[0]
-        self.r_max -= 1.0
 
+        self.radius = nn.Parameter(torch.tensor(self.r_max))
 
-
-
+        self.k = nn.Parameter(torch.tensor(self.k_init))
 
     def forward(self, features, u_nn, u_analytic):
         if not self.enforce_bc:
@@ -42,8 +41,8 @@ class EnforceBoundaryConditions(nn.Module):
 
 if __name__ == '__main__':
     r_max = 3.0
-    tanh_r = 0.0
-    tanh_k = 0.0
+    tanh_r = 3.0
+    tanh_k = 0.1
     bc = EnforceBoundaryConditions(True,True,
                                    r_max,tanh_r,tanh_k)
 
