@@ -1,20 +1,25 @@
-#import tensorflow
+import torch
+import torch.nn as nn
 
 
 
 from ScaleNN import ScaleNNPotential
 from analytic import AnalyticModelLayer
+from cart import Cart2_Pines_Sph_Layer
+from inverse_r import Inv_R_Layer
+from enforce import EnforceBoundaryConditions
 
 class GAIKnet(nn.Module):
     def __init__(self,N):
         super(GAIKnet,self).__init__()
         self.N = N
         self.inv_r = Inv_R_Layer()
-        return
         self.fc = nn.Linear(3*self.N,4*self.N)
         self.cart = Cart2_Pines_Sph_Layer()
         self.scale_nn = ScaleNNPotential(2,16e3,0.0,True)
-       # self.analytic = AnalyticModelLayer()
+        self.analytic = AnalyticModelLayer()
+        self.enf = EnforceBoundaryConditions()
+
 
     # 0 input_1[(None, 1)][(None, 1)]
     # 1 cart2_pines_sph_layer(None, 1)(None, 2)
@@ -26,11 +31,13 @@ class GAIKnet(nn.Module):
     # 7 enforce_boundary_conditions(None, 2)(None, 0)
 
     def forward(self,x):
-        #x = self.cart(x)
-        x = self.inv_r(x)
-        # x = self.fc(x)
-        # x = self.scale_nn(x)
-        # x = self.analytic(x)
+
+        x         = self.cart(x)
+        x         = self.inv_r(x)
+        x         = self.fc(x)
+        x_nn,x_an = self.analytic(x)
+        x         = self.scale_nn(x_nn,x_an)
+        x         = self.enf(x)
         return x
 
 
