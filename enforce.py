@@ -51,3 +51,5 @@ if __name__ == '__main__':
     u_analytic = torch.from_numpy(np.loadtxt('enforce_u_analytic.txt'))
     y = bc(features,u_nn,u_analytic)
 
+
+

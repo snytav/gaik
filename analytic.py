@@ -2,6 +2,10 @@ import torch
 import torch.nn as nn
 import numpy as np
 
+
+
+
+
 def H(x, r, k):
     # assuming k > 0 this goes from 0 -> 1 as x->inf
     dr = torch.subtract(x, r)
