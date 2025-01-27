@@ -14,24 +14,28 @@ def H(x, r, k):
 
 
 class AnalyticModelLayer(nn.Module):
-    def __init__(self, transition_potential,R,R_min,mu,C20):
+    def __init__(self, R,R_min,mu,C20,scaler):
         super(AnalyticModelLayer, self).__init__()
 
         # defaults to zero
         self.mu = 0.0#kwargs.get("mu_non_dim", [0.0])[0]
         self.C20 = C20
+        self.scaler = scaler
 
-        self.use_transition_potential = transition_potential
+        # self.use_transition_potential = transition_potential
 
         self.c1 = np.sqrt(15.0 / 4.0) * np.sqrt(3.0)
         self.c2 = np.sqrt(5.0 / 4.0)
 
         from ScaleNN import compute_shape_parameters
-        a, b, e = compute_shape_parameters(R,R_min)
+        a, b, e = compute_shape_parameters(R,R_min,R_min,scaler)
         self.a = a
         self.b = b
 
         self.mu = mu
+
+        self.r_external = torch.nn.Parameter(torch.zeros(1))
+        self.k_external = torch.nn.Parameter(0.5*torch.ones(1))
 
         self.trainable_tanh = True
 
@@ -72,3 +76,14 @@ class AnalyticModelLayer(nn.Module):
 
         return u_analytic
 
+if __name__ == '__main__':
+    R                    = 16000.0
+    R_min                = 0.195
+    mu                   = 0.3705464
+    C20                  = 0.0
+    scaler               = 6.25e-5
+    an = AnalyticModelLayer(R,R_min,mu,C20,scaler)
+    import numpy as np
+    x = torch.from_numpy(np.loadtxt('analytic_input_00000.txt'))
+    y = an(x)
+    qq = 0

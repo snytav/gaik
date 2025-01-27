@@ -18,7 +18,11 @@ class GAIKnet(nn.Module):
         self.inv_r    = Inv_R_Layer()
         self.fc       = nn.Linear(3*self.N,4*self.N)
         self.cart     = Cart2_Pines_Sph_Layer()
-        self.scale_nn = ScaleNNPotential(2,16e3,0.0,True)
+        scale_potential = True
+        # use_transition_potential = True
+        min_ = 0.0
+                       #ScaleNNPotential(scaler, power, R, R_min, scale_potential, min_)
+        self.scale_nn = ScaleNNPotential(2,16e3,0.0,True,scale_potential, min_)
         self.analytic = AnalyticModelLayer()
         self.enf      = EnforceBoundaryConditions()
         self.fn       = FuseModels(True)
