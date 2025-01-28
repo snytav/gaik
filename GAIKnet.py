@@ -16,7 +16,7 @@ class GAIKnet(nn.Module):
         super(GAIKnet,self).__init__()
         self.N = N
         self.inv_r    = Inv_R_Layer()
-        self.fc       = nn.Linear(3*self.N,4*self.N)
+        self.fc       = nn.Linear(5*self.N,4*self.N)
         self.cart     = Cart2_Pines_Sph_Layer()
         scale_potential = True
         # use_transition_potential = True
@@ -30,7 +30,12 @@ class GAIKnet(nn.Module):
         scaler = 6.25e-5
         an = AnalyticModelLayer
         self.analytic = AnalyticModelLayer(R, R_min, mu, C20, scaler)
-        self.enf      = EnforceBoundaryConditions()
+        r_max = 3.0
+        tanh_r = 3.0
+        tanh_k = 0.1
+        self.enf = EnforceBoundaryConditions(True, True,
+                                       r_max, tanh_r, tanh_k)
+        # self.enf      = EnforceBoundaryConditions()
         self.fn       = FuseModels(True)
         self.fuse_models = True
 
@@ -61,7 +66,12 @@ class GAIKnet(nn.Module):
 
         x         = self.cart(x)
         x         = self.inv_r(x)
-        x         = self.fc(x)
+        N         = x.shape[0]
+        M         = x.shape[1]
+        x         = x.reshape(N*M)
+        x         = self.fc(x.float())
+        M1 = int(x.shape[0]/N)
+        x = x.reshape(N,M1)
         x_nn,x_an = self.analytic(x)
         x         = self.scale_nn(x_nn,x_an)
         x         = self.fn(x)
@@ -73,8 +83,9 @@ class GAIKnet(nn.Module):
 
 if __name__ == '__main__':
     import numpy as np
-    x = np.loadtxt('cart_input_00000.txt')
+    x = torch.from_numpy(np.loadtxt('cart_input_00000.txt'))
     model = GAIKnet(x.shape[0])
 
     y = model(x)
+    qq = 0
 
