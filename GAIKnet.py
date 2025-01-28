@@ -69,14 +69,14 @@ class GAIKnet(nn.Module):
         N         = x.shape[0]
         M         = x.shape[1]
         x         = x.reshape(N*M)
-        x         = self.fc(x.float())
-        M1 = int(x.shape[0]/N)
-        x = x.reshape(N,M1)
-        x_nn,x_an = self.analytic(x)
+        x_nn      = self.fc(x.float())
+        M1        = int(x_nn.shape[0]/N)
+        x_nn      = x_nn.reshape(N,M1)
+        x_an      = self.analytic(x.reshape(N,5))
         x         = self.scale_nn(x_nn,x_an)
-        x         = self.fn(x)
+        #x         = self.fn(x)
 
-        x         = self.enf(x)
+        x         = self.enf(x_nn,SMTH_HERE,x_an)
         return x
 
 
