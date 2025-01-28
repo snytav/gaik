@@ -23,7 +23,13 @@ class GAIKnet(nn.Module):
         min_ = 0.0
                        #ScaleNNPotential(scaler, power, R, R_min, scale_potential, min_)
         self.scale_nn = ScaleNNPotential(2,16e3,0.0,True,scale_potential, min_)
-        self.analytic = AnalyticModelLayer()
+        R = 16000.0
+        R_min = 0.195
+        mu = 0.3705464
+        C20 = 0.0
+        scaler = 6.25e-5
+        an = AnalyticModelLayer
+        self.analytic = AnalyticModelLayer(R, R_min, mu, C20, scaler)
         self.enf      = EnforceBoundaryConditions()
         self.fn       = FuseModels(True)
         self.fuse_models = True
