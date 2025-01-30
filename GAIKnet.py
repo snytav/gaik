@@ -1,3 +1,6 @@
+#sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+
 import torch
 import torch.nn as nn
 
@@ -62,22 +65,28 @@ class GAIKnet(nn.Module):
         rms = nn.RMSNorm(dy)
         return rms
 
-    def forward(self,x):
+    def forward(self,inputs):
 
-        x         = self.cart(x)
-        x         = self.inv_r(x)
-        N         = x.shape[0]
-        M         = x.shape[1]
-        x         = x.reshape(N*M)
-        x_nn      = self.fc(x.float())
-        M1        = int(x_nn.shape[0]/N)
-        x_nn      = x_nn.reshape(N,M1)
-        x_an      = self.analytic(x.reshape(N,5))
-        x         = self.scale_nn(x_nn,x_an)
-        #x         = self.fn(x)
 
-        x         = self.enf(x_nn,SMTH_HERE,x_an)
-        return x
+
+        # x_nn      = self.fc(x.float())
+        # M1        = int(x_nn.shape[0]/N)
+        # x_nn      = x_nn.reshape(N,M1)
+        # x_an      = self.analytic(x.reshape(N,5))
+        # x         = self.scale_nn(x_nn,x_an)
+        # #x         = self.fn(x)
+
+        features = self.cart(inputs)
+        # N = features.shape[0]
+        # M = features.shape[1]
+        # x = features.reshape(N * M)
+        u_nn = self.inv_r(features)
+        u_analytic = self.analytic(features)
+        u_nn_scaled = self.scale_nn(features, u_nn)
+        u_fused = self.fuse_models(u_nn_scaled, u_analytic)
+        u = self.enf(features, u_fused, u_analytic)
+
+        return u
 
 
 
