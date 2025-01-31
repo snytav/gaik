@@ -22,6 +22,7 @@ class GAIKnet(nn.Module):
         self.fc       = nn.Linear(5*self.N,4*self.N)
         self.cart     = Cart2_Pines_Sph_Layer()
         scale_potential = True
+        self.fuse =
         # use_transition_potential = True
         min_ = 0.0
                        #ScaleNNPotential(scaler, power, R, R_min, scale_potential, min_)
