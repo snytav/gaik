@@ -77,14 +77,13 @@ class GAIKnet(nn.Module):
            p       = np.loadtxt(self.grav_path+'inv_r_output_00000.txt') 
            eps_inv = np.abs(np.max(u_nn.detach().numpy()-p))
            qq = 0
-
-        
-
-        # N = features.shape[0]
-        # M = features.shape[1]
-        # x = features.reshape(N * M)
-        u_nn = self.inv_r(features)
-        u_analytic = self.analytic(features)
+      
+        u_analytic = self.analytic(y)
+        if self.debug:
+           p       = np.loadtxt(self.grav_path+'analytic_output_00000.txt') 
+           eps_an  = np.abs(np.max(u_analytic.detach().numpy()-p))
+           qq = 0
+   
         u_nn_scaled = self.scale_nn(features, u_nn)
         u_fused = self.fuse_models(u_nn_scaled, u_analytic)
         u = self.enf(features, u_fused, u_analytic)
