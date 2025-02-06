@@ -16,7 +16,7 @@ class Inv_R_Layer(nn.Module):
         r = inputs[:, 0:1]
         r_cap, r_inv_cap = r_safety_set(r)
         spheres = torch.concat([r_cap, r_inv_cap, inputs[:, 1:4]], axis=1)
-        return spheres
+        return spheres[:,:3]
 
 
 if __name__ == '__main__':

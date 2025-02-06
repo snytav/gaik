@@ -17,6 +17,8 @@ import torch.nn as nn
 class GAIKnet(nn.Module):
     def __init__(self,N):
         super(GAIKnet,self).__init__()
+        self.debug     = True
+        self.grav_path = '/home/snytav/PycharmProjects/GravNN/Examples/'
         self.N = N
         self.inv_r    = Inv_R_Layer()
         self.fc       = nn.Linear(5*self.N,4*self.N)
@@ -66,17 +68,18 @@ class GAIKnet(nn.Module):
         return rms
 
     def forward(self,inputs):
+        y    = self.cart(inputs)
+        if self.debug:
+           p   = np.loadtxt(self.grav_path+'cart_output_00000.txt') 
+           eps_cart = np.abs(np.max(y.detach().numpy()-p))
+        u_nn = self.inv_r(y)
+        if self.debug:
+           p       = np.loadtxt(self.grav_path+'inv_r_output_00000.txt') 
+           eps_inv = np.abs(np.max(u_nn.detach().numpy()-p))
+           qq = 0
 
+        
 
-
-        # x_nn      = self.fc(x.float())
-        # M1        = int(x_nn.shape[0]/N)
-        # x_nn      = x_nn.reshape(N,M1)
-        # x_an      = self.analytic(x.reshape(N,5))
-        # x         = self.scale_nn(x_nn,x_an)
-        # #x         = self.fn(x)
-
-        features = self.cart(inputs)
         # N = features.shape[0]
         # M = features.shape[1]
         # x = features.reshape(N * M)
