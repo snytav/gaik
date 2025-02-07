@@ -33,9 +33,11 @@ def r_safety_set(r, clip=1.0):
     r_cap = torch.clip(r, 0.0, clip)
     return r_cap, r_inv_cap
 
-class ScaleNNPotential(nn.Module):
+from debug import DebugLayer
+class ScaleNNPotential(DebugLayer):
     def __init__(self,scaler,power,R,R_min,scale_potential,min_):
         super(ScaleNNPotential, self).__init__()
+        self.layer_name = 'scale'
         self.power = power
         self.use_transition_potential = True # kwargs.get("use_transition_potential", [True])[0]
 

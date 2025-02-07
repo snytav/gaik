@@ -12,8 +12,8 @@ def H(x, r, k):
     h = 0.5 + 0.5 * torch.tanh(k * dr)
     return h
 
-
-class AnalyticModelLayer(nn.Module):
+from debug import DebugLayer
+class AnalyticModelLayer(DebugLayer):
     def __init__(self, R,R_min,mu,C20,scaler):
         super(AnalyticModelLayer, self).__init__()
         self.layer_name = 'analytical'
@@ -41,6 +41,7 @@ class AnalyticModelLayer(nn.Module):
         self.trainable_tanh = True
 
     def forward(self, inputs):
+        eps = self.read_array('input',inputs)
         r = inputs[:, 0:1]
         u = inputs[:, 3:4]
 
@@ -76,6 +77,8 @@ class AnalyticModelLayer(nn.Module):
         # error.
         h_external = H(r, self.r_external, self.k_external)
         u_analytic = u_analytic * h_external
+        eps_f = self.read_array('output',u_analytic)
+
 
         return u_analytic
 
