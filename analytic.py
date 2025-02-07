@@ -16,6 +16,7 @@ def H(x, r, k):
 class AnalyticModelLayer(nn.Module):
     def __init__(self, R,R_min,mu,C20,scaler):
         super(AnalyticModelLayer, self).__init__()
+        self.layer_name = 'analytical'
 
         # defaults to zero
         self.mu = 0.0#kwargs.get("mu_non_dim", [0.0])[0]
@@ -49,6 +50,7 @@ class AnalyticModelLayer(nn.Module):
         # External
         # Compute point mass approximation assuming
         u_pm_external = self.mu * r_inv_cap
+        eps = self.read_array('u_pm_external',u_pm_external)
         u_C20 = (
             (self.a * r_inv_cap) ** 2
             * u_pm_external
@@ -56,6 +58,7 @@ class AnalyticModelLayer(nn.Module):
             * self.C20
         )
         u_external_full = torch.neg(u_pm_external + u_C20)
+        epsf = self.read_array('u_pm_external_full', u_external_full)
         # Internal
         u_external_pm_boundary = self.mu / self.a
         u_external_C20_boundary = (

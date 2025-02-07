@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import numpy as np
+from debug import DebugLayer
 
 
 def r_safety_set(r, clip=1.0):
@@ -9,13 +10,18 @@ def r_safety_set(r, clip=1.0):
     r_cap = torch.clip(r, 0.0, clip)
     return r_cap, r_inv_cap
 
-class Inv_R_Layer(nn.Module):
+class Inv_R_Layer(DebugLayer):
     def __init__(self):
         super(Inv_R_Layer,self).__init__()
+        self.layer_name = 'inv'
+        qq = 0
+
     def forward(self,inputs):
+        eps = self.read_array('input',inputs)
         r = inputs[:, 0:1]
         r_cap, r_inv_cap = r_safety_set(r)
         spheres = torch.concat([r_cap, r_inv_cap, inputs[:, 1:4]], axis=1)
+        eps2 = self.read_array('output',spheres[:,:3])
         return spheres[:,:3]
 
 
