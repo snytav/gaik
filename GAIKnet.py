@@ -20,9 +20,11 @@ class GAIKnet(nn.Module):
         self.debug     = True
         self.grav_path = '/home/snytav/PycharmProjects/GravNN/Examples/'
         self.N = N
-        self.inv_r    = Inv_R_Layer()
-        self.fc       = nn.Linear(5*self.N,4*self.N)
-        self.cart     = Cart2_Pines_Sph_Layer()
+        self.inv_r     = Inv_R_Layer()
+        self.fc        = nn.Linear(3*self.N,self.N)
+        self.fc.weight = nn.Parameter(torch.zeros_like(self.fc.weight).double())
+        self.fc.bias = nn.Parameter(torch.zeros_like(self.fc.bias).double())
+        self.cart      = Cart2_Pines_Sph_Layer()
         scale_potential = True
         # use_transition_potential = True
         min_ = 0.0
@@ -68,12 +70,13 @@ class GAIKnet(nn.Module):
         return rms
 
     def forward(self,inputs):
-        y    = self.cart(inputs)
-        u_nn = self.inv_r(y)
+        y     = self.cart(inputs)
+        y_inv = self.inv_r(y)
         u_analytic = self.analytic(y)
 
+        u_nn  = self.fc(y_inv.reshape(y_inv.shape[0]*y_inv.shape[1]))
    
-        u_nn_scaled = self.scale_nn(features, u_nn)
+        u_nn_scaled = self.scale_nn(y, u_nn)
         u_fused = self.fuse_models(u_nn_scaled, u_analytic)
         u = self.enf(features, u_fused, u_analytic)
 
