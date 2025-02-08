@@ -14,6 +14,8 @@ class DebugLayer(nn.Module):
           self.n_epoch = self.n_epoch + 1
 
       def read_array(self,array_name,arr):
+          if len(arr.shape) == 2 and arr.shape[1] == 1:
+              arr = arr.reshape(arr.shape[0]*arr.shape[1])
           if self.debug_flag:
              fname = self.layer_name + '_' + array_name + '_' + '{:05d}'.format(self.n_epoch) + '.txt'
              p =  np.loadtxt(self.path+fname)

@@ -16,7 +16,7 @@ from debug import DebugLayer
 class AnalyticModelLayer(DebugLayer):
     def __init__(self, R,R_min,mu,C20,scaler):
         super(AnalyticModelLayer, self).__init__()
-        self.layer_name = 'analytical'
+        self.layer_name = 'analytic'
 
         # defaults to zero
         self.mu = 0.0#kwargs.get("mu_non_dim", [0.0])[0]
@@ -47,6 +47,8 @@ class AnalyticModelLayer(DebugLayer):
 
         from ScaleNN import r_safety_set
         r_cap, r_inv_cap = r_safety_set(r)
+        epsc = self.read_array('r_cap', r_cap)
+        epsri = self.read_array('r_inv_cap', r_inv_cap)
 
         # External
         # Compute point mass approximation assuming
