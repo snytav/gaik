@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import numpy as np
+from debug import DebugLayer
 
 
 def H(x, r, k):
@@ -15,7 +16,7 @@ def G(x, r, k):
     return 1.0 - H(x, r, k)
 
 
-class EnforceBoundaryConditions(nn.Module):
+class EnforceBoundaryConditions(DebugLayer):
     def __init__(self,enforce_bc,trainable_tanh,r_max,tanh_r,tanh_k): # **kwargs):
         super(EnforceBoundaryConditions, self).__init__()
         self.enforce_bc = enforce_bc # kwargs["enforce_bc"][0]
@@ -28,13 +29,19 @@ class EnforceBoundaryConditions(nn.Module):
 
         self.k = nn.Parameter(torch.tensor(self.k_init))
 
+        self.layer_name = 'enf'
+
     def forward(self, features, u_nn, u_analytic):
+        e1 = self.read_array('input_features',features)
+        e2 = self.read_array('input_analytic',u_analytic)
+        e3 = self.read_array('input_u_nn',u_nn)
         if not self.enforce_bc:
             return u_nn
         r = features[:, 0:1]
         h = H(r, self.radius, self.k)
         g = G(r, self.radius, self.k)
         u_model = g * u_nn + h * u_analytic
+        ef = self.read_array('output',u_model)
         return u_model
 
 

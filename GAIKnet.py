@@ -78,7 +78,7 @@ class GAIKnet(nn.Module):
    
         u_nn_scaled = self.scale_nn(y, u_nn)
         u_fused = self.fn(u_nn, u_analytic)
-        u = self.enf(features, u_fused, u_analytic)
+        u = self.enf(y, u_fused, u_analytic)
 
         return u
 
