@@ -77,7 +77,7 @@ class GAIKnet(nn.Module):
         u_nn  = self.fc(y_inv.reshape(y_inv.shape[0]*y_inv.shape[1]))
    
         u_nn_scaled = self.scale_nn(y, u_nn)
-        u_fused = self.fuse_models(u_nn_scaled, u_analytic)
+        u_fused = self.fn(u_nn, u_analytic)
         u = self.enf(features, u_fused, u_analytic)
 
         return u
