@@ -14,15 +14,21 @@ from enforce import EnforceBoundaryConditions
 from fuse import FuseModels
 import torch.nn as nn
 
+from fuse import FuseModels
+
 class GAIKnet(nn.Module):
-    def __init__(self,N):
+    def __init__(self,N,trace_flag):
+
         super(GAIKnet,self).__init__()
+
+        self.trace = trace_flag
+        self.epoch = 0
         self.N = N
         self.inv_r    = Inv_R_Layer()
         self.fc       = nn.Linear(5*self.N,4*self.N)
         self.cart     = Cart2_Pines_Sph_Layer()
         scale_potential = True
-        self.fuse =
+        self.fuse = FuseModels(True)
         # use_transition_potential = True
         min_ = 0.0
                        #ScaleNNPotential(scaler, power, R, R_min, scale_potential, min_)
@@ -66,6 +72,20 @@ class GAIKnet(nn.Module):
         rms = nn.RMSNorm(dy)
         return rms
 
+    def get_tensor_file_name(self,layer_name,name,subtitle,global_epoch_number):
+        fn = layer_name+'_'+name+'_'+subtitle + '{:05d}'.format(global_epoch_number) + '.txt'
+        return fn
+
+    def check(self,layer_name,name,dubious_values,global_epoch_number):
+        if not self.trace:
+            return 0.0
+        else:
+            fn = self.get_tensor_file_name(layer_name,name,'',global_epoch_number)
+            correct_values = np.loadtxt(fn)
+            res = np.max(np.abs(correct_values-dubious_values.numpy()))
+            return res
+
+
     def forward(self,inputs):
 
 
@@ -78,6 +98,8 @@ class GAIKnet(nn.Module):
         # #x         = self.fn(x)
 
         features = self.cart(inputs)
+        res = self.check('cart','output',features,self.epoch)
+
         # N = features.shape[0]
         # M = features.shape[1]
         # x = features.reshape(N * M)
@@ -94,7 +116,7 @@ class GAIKnet(nn.Module):
 if __name__ == '__main__':
     import numpy as np
     x = torch.from_numpy(np.loadtxt('cart_input_00000.txt'))
-    model = GAIKnet(x.shape[0])
+    model = GAIKnet(x.shape[0],True)
 
     y = model(x)
     qq = 0
