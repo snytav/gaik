@@ -103,7 +103,10 @@ class GAIKnet(nn.Module):
         # N = features.shape[0]
         # M = features.shape[1]
         # x = features.reshape(N * M)
+        res = self.check('inv_r', 'input', features, self.epoch)
+
         u_nn = self.inv_r(features)
+        res = self.check('inv_r', 'output', u_nn, self.epoch)
         u_analytic = self.analytic(features)
         u_nn_scaled = self.scale_nn(features, u_nn)
         u_fused = self.fuse_models(u_nn_scaled, u_analytic)
