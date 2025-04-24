@@ -72,7 +72,7 @@ class GAIKnet(nn.Module):
         rms = nn.RMSNorm(dy)
         return rms
 
-from check_module import check
+    from check_module import check,get_tensor_file_name
 
     def forward(self,inputs):
 
