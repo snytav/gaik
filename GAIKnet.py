@@ -107,7 +107,10 @@ class GAIKnet(nn.Module):
 
         u_nn = self.inv_r(features)
         res = self.check('inv_r', 'output', u_nn, self.epoch)
+        res = self.check('analytic', 'input', features, self.epoch)
+
         u_analytic = self.analytic(features)
+
         u_nn_scaled = self.scale_nn(features, u_nn)
         u_fused = self.fuse_models(u_nn_scaled, u_analytic)
         u = self.enf(features, u_fused, u_analytic)
