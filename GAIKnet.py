@@ -72,19 +72,7 @@ class GAIKnet(nn.Module):
         rms = nn.RMSNorm(dy)
         return rms
 
-    def get_tensor_file_name(self,layer_name,name,subtitle,global_epoch_number):
-        fn = layer_name+'_'+name+'_'+subtitle + '{:05d}'.format(global_epoch_number) + '.txt'
-        return fn
-
-    def check(self,layer_name,name,dubious_values,global_epoch_number):
-        if not self.trace:
-            return 0.0
-        else:
-            fn = self.get_tensor_file_name(layer_name,name,'',global_epoch_number)
-            correct_values = np.loadtxt(fn)
-            res = np.max(np.abs(correct_values-dubious_values.numpy()))
-            return res
-
+from check_module import check
 
     def forward(self,inputs):
 
@@ -110,6 +98,7 @@ class GAIKnet(nn.Module):
         res = self.check('analytic', 'input', features, self.epoch)
 
         u_analytic = self.analytic(features)
+        res = self.check('analytic', 'output', u_analytic.detach(), self.epoch)
 
         u_nn_scaled = self.scale_nn(features, u_nn)
         u_fused = self.fuse_models(u_nn_scaled, u_analytic)
