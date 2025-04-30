@@ -40,7 +40,6 @@ class AnalyticModelLayer(nn.Module):
         self.trainable_tanh = True
 
     def forward(self, inputs):
-        res = self.check('analytic', 'inputs',inputs, self.epoch)
 
         r = inputs[:, 0:1]
         u = inputs[:, 3:4]

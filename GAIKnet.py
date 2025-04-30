@@ -13,6 +13,7 @@ from inverse_r import Inv_R_Layer
 from enforce import EnforceBoundaryConditions
 from fuse import FuseModels
 import torch.nn as nn
+from check_module import check,get_tensor_file_name
 
 from fuse import FuseModels
 
@@ -72,7 +73,7 @@ class GAIKnet(nn.Module):
         rms = nn.RMSNorm(dy)
         return rms
 
-    from check_module import check,get_tensor_file_name
+
 
     def forward(self,inputs):
 
@@ -86,19 +87,20 @@ class GAIKnet(nn.Module):
         # #x         = self.fn(x)
 
         features = self.cart(inputs)
-        res = self.check('cart','output',features,self.epoch)
+        res = check('cart','output',features,self.epoch)
 
         # N = features.shape[0]
         # M = features.shape[1]
         # x = features.reshape(N * M)
-        res = self.check('inv_r', 'input', features, self.epoch)
+        res = check('inv_r', 'input', features, self.epoch)
 
         u_nn = self.inv_r(features)
-        res = self.check('inv_r', 'output', u_nn, self.epoch)
-        res = self.check('analytic', 'input', features, self.epoch)
+        res = check('inv_r', 'output', u_nn, self.epoch)
+        res = check('analytic', 'input', features, self.epoch)
 
+        res = check('analytic', 'input', features, self.epoch)
         u_analytic = self.analytic(features)
-        res = self.check('analytic', 'output', u_analytic.detach(), self.epoch)
+        res = check('analytic', 'output', u_analytic.detach(), self.epoch)
 
         u_nn_scaled = self.scale_nn(features, u_nn)
         u_fused = self.fuse_models(u_nn_scaled, u_analytic)
