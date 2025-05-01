@@ -47,6 +47,8 @@ class AnalyticModelLayer(nn.Module):
 
         from ScaleNN import r_safety_set
         r_cap, r_inv_cap = r_safety_set(r)
+        res = check('analytic', 'r_cap', r_cap)
+        res = check('analytic', 'r_inv_cap', r_inv_cap)
 
         # External
         # Compute point mass approximation assuming
