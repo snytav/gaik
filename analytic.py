@@ -44,7 +44,7 @@ class AnalyticModelLayer(nn.Module):
 
         r = inputs[:, 0:1]
         u = inputs[:, 3:4]
-
+        res = check('analytic', 'r', r)
         from ScaleNN import r_safety_set
         r_cap, r_inv_cap = r_safety_set(r)
         res = check('analytic', 'r_cap', r_cap)

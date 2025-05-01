@@ -30,7 +30,7 @@ def compute_shape_parameters(R,R_min,min_,scaler):
 def r_safety_set(r, clip=1.0):
     r_inv = torch.divide(torch.ones_like(r), r)
     r_inv_cap = torch.clip(r_inv, 0.0, clip)
-    r_cap = torch.clip(r, 0.0, clip)
+    r_cap = torch.clamp(r, 0.0, clip)
     return r_cap, r_inv_cap
 
 class ScaleNNPotential(nn.Module):
