@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import numpy as np
-
+from check_module import check
 
 
 
@@ -40,6 +40,7 @@ class AnalyticModelLayer(nn.Module):
         self.trainable_tanh = True
 
     def forward(self, inputs):
+        res = check('analytic', 'input', inputs)
 
         r = inputs[:, 0:1]
         u = inputs[:, 3:4]

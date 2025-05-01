@@ -87,20 +87,20 @@ class GAIKnet(nn.Module):
         # #x         = self.fn(x)
 
         features = self.cart(inputs)
-        res = check('cart','output',features,self.epoch)
+        res = check('cart','output',features)
 
         # N = features.shape[0]
         # M = features.shape[1]
         # x = features.reshape(N * M)
-        res = check('inv_r', 'input', features, self.epoch)
+        res = check('inv_r', 'input', features)
 
         u_nn = self.inv_r(features)
-        res = check('inv_r', 'output', u_nn, self.epoch)
-        res = check('analytic', 'input', features, self.epoch)
+        res = check('inv_r', 'output', u_nn)
+        res = check('analytic', 'input', features)
 
-        res = check('analytic', 'input', features, self.epoch)
+        res = check('analytic', 'input', features)
         u_analytic = self.analytic(features)
-        res = check('analytic', 'output', u_analytic.detach(), self.epoch)
+        res = check('analytic', 'output', u_analytic.detach())
 
         u_nn_scaled = self.scale_nn(features, u_nn)
         u_fused = self.fuse_models(u_nn_scaled, u_analytic)
