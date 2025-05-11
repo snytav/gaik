@@ -46,6 +46,9 @@ class ScaleNNPotential(nn.Module):
         self.e = e
 
     def forward(self, features, u_nn):
+        from check_module import check
+        res = check('scale_nn', 'features', features)
+        res = check('scale_nn', 'u_nn', u_nn)
         r = features[:, 0:1]
         r_cap, r_inv_cap = r_safety_set(r)
 

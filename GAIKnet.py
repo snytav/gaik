@@ -17,6 +17,8 @@ from check_module import check,get_tensor_file_name
 
 from fuse import FuseModels
 
+
+
 class GAIKnet(nn.Module):
     def __init__(self,N,trace_flag):
 
@@ -100,6 +102,8 @@ class GAIKnet(nn.Module):
 
         res = check('analytic', 'input', features)
         u_analytic = self.analytic(features)
+        res = check('analytic', 'output', u_analytic.detach())
+
         res = check('analytic', 'output', u_analytic.detach())
 
         u_nn_scaled = self.scale_nn(features, u_nn)
