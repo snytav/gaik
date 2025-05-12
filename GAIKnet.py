@@ -75,7 +75,20 @@ class GAIKnet(nn.Module):
         rms = nn.RMSNorm(dy)
         return rms
 
+    def get_layer_type(self,fname):
+        name = fname.split('_')[0]
 
+
+    def get_layer(self,fname):
+        name = self.get_layer_type(fname)
+
+        if name == 'cart':
+            return self.cart
+        ...
+
+
+    def layer_launch_and_check(self,fname,arg1,arg2):
+        layer_name = fname.split('_')[0]
 
     def forward(self,inputs):
 
