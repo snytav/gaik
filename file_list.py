@@ -48,7 +48,7 @@ if __name__ == '__main__':
     matching_files = list_files_by_mask('.', '*put*.txt')
     for f in matching_files:
         n = len(f.split('_'))
-        if n > 4:
+        if n != 4:
            print(f)
            os.remove(f)
     get_layer_sequence()

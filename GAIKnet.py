@@ -84,11 +84,27 @@ class GAIKnet(nn.Module):
 
         if name == 'cart':
             return self.cart
-        ...
 
+        if name == 'inv':
+            return self.inv_r
+
+        if name == 'analytic':
+            return self.analytic
+
+        if name == 'fuse':
+            return self.fuse
+
+        if name == 'enforce':
+            return self.enf
+
+        if name == 'dens':
+            return self.fc
 
     def layer_launch_and_check(self,fname,arg1,arg2):
-        layer_name = fname.split('_')[0]
+        name = self.get_layer_type(fname)
+        layer = self.get_layer()
+        res1,res2 = layer(arg1,arg2)
+        qq = 0
 
     def forward(self,inputs):
 
@@ -129,11 +145,13 @@ class GAIKnet(nn.Module):
 
 if __name__ == '__main__':
     import numpy as np
+    import os
     from file_list import list_files_by_mask,get_layer_sequence
     x = torch.from_numpy(np.loadtxt('cart_input_00000.txt'))
-    model = GAIKnet(x.shape[0],True)
+    os.remove('./cart_input_00000.txt')
 
-    y = model(x)
+
+    #y = model(x)
 
     matching_files = list_files_by_mask('.', '*put*.txt')
     for f in matching_files:
@@ -141,7 +159,9 @@ if __name__ == '__main__':
         if n > 4:
             print(f)
             os.remove(f)
-    get_layer_sequence()
+    lseq = get_layer_sequence()
+    model = GAIKnet(x.shape[0], True)
+    model.layer_launch_and_check(lseq[0][0],lseq[0][1],lseq[0][2])
 
 
     qq = 0
