@@ -37,7 +37,7 @@ def get_layer_sequence():
     file_mask = '*put*.txt'
     matching_files = list_files_by_mask(directory_path, file_mask)
     sorted_files = sort_by_substring(matching_files,3)
-    nm = [l.split('/')[1] for l in sorted_files]
+    nm = [l.split('/')[1].split('_')[0] for l in sorted_files]
     return nm
 
 
