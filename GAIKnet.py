@@ -116,9 +116,20 @@ class GAIKnet(nn.Module):
 
 if __name__ == '__main__':
     import numpy as np
+    from file_list import list_files_by_mask,get_layer_sequence
     x = torch.from_numpy(np.loadtxt('cart_input_00000.txt'))
     model = GAIKnet(x.shape[0],True)
 
     y = model(x)
+
+    matching_files = list_files_by_mask('.', '*put*.txt')
+    for f in matching_files:
+        n = len(f.split('_'))
+        if n > 4:
+            print(f)
+            os.remove(f)
+    get_layer_sequence()
+
+
     qq = 0
 
