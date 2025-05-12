@@ -147,8 +147,8 @@ if __name__ == '__main__':
     import numpy as np
     import os
     from file_list import list_files_by_mask,get_layer_sequence
-    x = torch.from_numpy(np.loadtxt('cart_input_00000.txt'))
-    os.remove('./cart_input_00000.txt')
+    # x = torch.from_numpy(np.loadtxt('cart_input_00000.txt'))
+    # os.remove('./cart_input_00000.txt')
 
 
     #y = model(x)
@@ -160,6 +160,7 @@ if __name__ == '__main__':
             print(f)
             os.remove(f)
     lseq = get_layer_sequence()
+    x = torch.from_numpy(np.loadtxt(matching_files[0]))
     model = GAIKnet(x.shape[0], True)
     model.layer_launch_and_check(lseq[0][0],lseq[0][1],lseq[0][2])
 

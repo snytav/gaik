@@ -31,14 +31,27 @@ else:
 def sort_by_substring(string_list,substr_num):
     return sorted(string_list, key=lambda x: x.split('_')[substr_num])
 
+def merge_pairs(nm):
+    from itertools import groupby
+    import itertools
+    li = nm
+    tuple_list = list(map(tuple, li))
+    output_list = [[idx] + list(itertools.chain.from_iterable(list(filter(None, i[1:])) for i in e)) for idx, e in
+                   groupby(tuple_list, lambda x: x[0])]
+    return output_list
+
 
 def get_layer_sequence():
     directory_path = '.'
     file_mask = '*put*.txt'
     matching_files = list_files_by_mask(directory_path, file_mask)
     sorted_files = sort_by_substring(matching_files,3)
-    nm = [l.split('/')[1].split('_')[0] for l in sorted_files]
-    return nm
+    nm = [l.split('/')[1].split('_')[:2] for l in sorted_files]
+    # turn pairs like these ['fuse', 'input-unn00000'], ['fuse', 'input-uanalytic00000']
+    # into ['fuse', 'input-unn00000', 'input-uanalytic00000']
+    nm_merged_pairs = merge_pairs(nm)
+
+    return nm_merged_pairs
 
 
     return nm
