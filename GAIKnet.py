@@ -102,14 +102,14 @@ class GAIKnet(nn.Module):
 
     def get_input_output_file(self,inout,list_of_strings):
         found_strings_comp = [string for string in list_of_strings if inout in string]
-        return found_strings_comp[0]
+        return found_strings_comp
 
     def layer_run_and_check(self,layer_sequence,lnum):
         lseq = layer_sequence
         layer = self.get_layer(lseq[lnum][0])
 
-        in_file = self.get_input_output_file('input', lseq[lnum])
-        in_x = torch.from_numpy(np.loadtxt(in_file))
+        in_files = self.get_input_output_file('input', lseq[lnum])
+        in_x = [torch.from_numpy(np.loadtxt(f)) for f in in_files]
         out = layer(in_x)
         out_file = self.get_input_output_file('output', lseq[lnum])
         out_correct = np.loadtxt(out_file)
@@ -180,7 +180,9 @@ if __name__ == '__main__':
     # out_file = model.get_input_output_file('output',lseq[0])
     # out_correct = np.loadtxt(out_file)
     # eps = np.max(np.abs(out_correct-out.detach().numpy()))
-    eps = model.layer_run_and_check(lseq,0)
+    #for i in range(len(lseq)):
+    eps = model.layer_run_and_check(lseq,4)
+    qq = 0
 
 
 
