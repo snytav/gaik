@@ -79,8 +79,8 @@ class GAIKnet(nn.Module):
         name = fname.split('_')[0]
 
 
-    def get_layer(self,fname):
-        name = self.get_layer_type(fname)
+    def get_layer(self,name):
+        #name = self.get_layer_type(fname)
 
         if name == 'cart':
             return self.cart
@@ -100,11 +100,9 @@ class GAIKnet(nn.Module):
         if name == 'dens':
             return self.fc
 
-    def layer_launch_and_check(self,fname,arg1,arg2):
-        name = self.get_layer_type(fname)
-        layer = self.get_layer()
-        res1,res2 = layer(arg1,arg2)
-        qq = 0
+    def get_input_output_file(self,inout,list_of_strings):
+        found_strings_comp = [string for string in list_of_strings if inout in string]
+        return found_strings_comp[0]
 
     def forward(self,inputs):
 
@@ -162,7 +160,20 @@ if __name__ == '__main__':
     lseq = get_layer_sequence()
     x = torch.from_numpy(np.loadtxt(matching_files[0]))
     model = GAIKnet(x.shape[0], True)
-    model.layer_launch_and_check(lseq[0][0],lseq[0][1],lseq[0][2])
+    layer = model.get_layer(lseq[0][0])
+
+    in_file = model.get_input_output_file('input',lseq[0])
+    in_x = torch.from_numpy(np.loadtxt(in_file))
+    out = layer(in_x)
+    out_file = model.get_input_output_file('output',lseq[0])
+    out_correct = np.loadtxt(out_file)
+    eps = np.max(np.abs(out_correct-out.detach().numpy()))
+
+
+
+
+
+
 
 
     qq = 0

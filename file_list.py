@@ -46,7 +46,7 @@ def get_layer_sequence():
     file_mask = '*put*.txt'
     matching_files = list_files_by_mask(directory_path, file_mask)
     sorted_files = sort_by_substring(matching_files,3)
-    nm = [l.split('/')[1].split('_')[:2] for l in sorted_files]
+    nm = [[l.split('/')[1].split('_')[0],l] for l in sorted_files]
     # turn pairs like these ['fuse', 'input-unn00000'], ['fuse', 'input-uanalytic00000']
     # into ['fuse', 'input-unn00000', 'input-uanalytic00000']
     nm_merged_pairs = merge_pairs(nm)
@@ -54,7 +54,7 @@ def get_layer_sequence():
     return nm_merged_pairs
 
 
-    return nm
+
 
 if __name__ == '__main__':
 
@@ -64,4 +64,6 @@ if __name__ == '__main__':
         if n != 4:
            print(f)
            os.remove(f)
-    get_layer_sequence()
+    lseq = get_layer_sequence()
+
+
