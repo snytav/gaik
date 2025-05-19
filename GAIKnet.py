@@ -100,6 +100,9 @@ class GAIKnet(nn.Module):
         if name == 'dens':
             return self.fc
 
+        if name == 'scale':
+            return self.scale_nn
+
     def get_input_output_file(self,inout,list_of_strings):
         found_strings_comp = [string for string in list_of_strings if inout in string]
         return found_strings_comp
@@ -110,9 +113,12 @@ class GAIKnet(nn.Module):
 
         in_files = self.get_input_output_file('input', lseq[lnum])
         in_x = [torch.from_numpy(np.loadtxt(f)) for f in in_files]
-        out = layer(in_x)
+        if len(in_files) == 1:
+            out = layer(in_x[0])
+        if len(in_files) == 2:
+            out = layer(in_x[0],in_x[1])
         out_file = self.get_input_output_file('output', lseq[lnum])
-        out_correct = np.loadtxt(out_file)
+        out_correct = np.loadtxt(out_file[0])
         eps = np.max(np.abs(out_correct - out.detach().numpy()))
         return eps
 
@@ -181,6 +187,7 @@ if __name__ == '__main__':
     # out_correct = np.loadtxt(out_file)
     # eps = np.max(np.abs(out_correct-out.detach().numpy()))
     #for i in range(len(lseq)):
+    eps = model.layer_run_and_check(lseq, 0)
     eps = model.layer_run_and_check(lseq,4)
     qq = 0
 
